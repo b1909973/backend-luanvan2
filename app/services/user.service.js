@@ -11,7 +11,7 @@ const driver = neo4j.driver('bolt://3.236.157.146:7687',
             
         const result = await session.run(`match (u:user),(f:favorites) where u.id='${id}' match (u)-[r:like]->(f) match (u1:user)-[r1:like]->(f) where u1.id<>'${id}' return u1,count(u1) as cn ORDER BY  cn DESC`)
         const kq =result.records.map(i=>{
-          console.log(i.get('u1').properties)
+          // console.log(i.get('u1').properties)
           return i.get('u1').properties
          
         }  )
