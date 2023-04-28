@@ -19,7 +19,7 @@ const driver = neo4j.driver('bolt://3.236.157.146:7687',
       
        return kq;
       
-      } finally{
+      } catch{
         await session.close()
         return {message:'Failed'};
       }
