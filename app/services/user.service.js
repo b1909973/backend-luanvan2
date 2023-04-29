@@ -4,12 +4,16 @@ const driver = neo4j.driver('bolt://3.236.157.146:7687',
                   {/* encrypted: 'ENCRYPTION_OFF' */});
 
 // const personName = 'Alice'
+
+
+
+
     const findPeopleTheSameFavorites = async (id)=>{
       const session = driver.session({database:'neo4j'});
       try{
           console.log('deo');
             
-        const result = await session.run(`match (u:user),(f:favorites) where u.id='${id}' match (u)-[r:like]->(f) match (u1:user)-[r1:like]->(f) where u1.id<>'${id}' return u1,count(u1) as cn ORDER BY  cn DESC`)
+        const result = await session.run(`match (u:user),(f:favorites) where u.id='${id}' match (u)-[r:like]->(f) match (u1:user)-[r1:like]->(f) where u1.id<>'${id}'  with u1,u where not (u)-[:FOLLOWING]->(u1) return u1`)
         const kq =result.records.map(i=>{
           console.log(i.get('u1').properties.id)
           return (i.get('u1').properties.id)
@@ -26,6 +30,31 @@ const driver = neo4j.driver('bolt://3.236.157.146:7687',
         
     }
 
+
+    const findFriendOfFriend = async (id)=>{
+     
+
+
+      const session = driver.session({database:'neo4j'});
+      try{
+          console.log('deo');
+            
+        const result = await session.run(` match (a:user {id:'${id}'})-[:FOLLOWING]->(b:user)-[:FOLLOWING]->(u1:user) where not (u1)-[:FOLLOWING]->(a) and u1<>a return u1`)
+        const kq =result.records.map(i=>{
+          console.log(i.get('u1').properties.id)
+          return (i.get('u1').properties.id)
+         
+        }  )
+      
+      
+       return kq;
+      
+      } catch{
+        await session.close()
+        return {message:'Failed'};
+      }
+        
+    }
 
 //     const findAll = async ()=>{
 // const session = driver.session({database:'neo4j'})
@@ -51,6 +80,34 @@ const driver = neo4j.driver('bolt://3.236.157.146:7687',
         // const result = await session.run(`CREATE (u:User {_id:'${Math.floor((new Date().getTime() * Math.random())).toString()}' , name:'${user.name}', phone:'${user.phone}'})`)
 
         // return result.records[0].properties
+      
+    }
+
+
+    const follow = async (userid,id)=>{
+      const session = driver.session({database:'neo4j'});
+        try {
+        const result = await session.run(`match (a:user {id:'${id}'}),(b:user {id:'${userid}'})  create (a)-[f:FOLLOWING]->(b)  return a,b`);
+      return {message:'Successfully'};
+          
+        } catch (error) {
+        await session.close()
+        return {message:'Failed'};
+        }
+   
+    }
+
+    const unfollow = async (userid,id)=>{
+      const session = driver.session({database:'neo4j'});
+        try {
+        const result = await session.run(`match (a:user {id:'${id}'}),(b:user {id:'${userid}'}), (a)-[f:FOLLOWING]->(b) delete f return a,b
+        `);
+      return {message:'Successfully'};
+        } catch (error) {
+        await session.close()
+        return {message:'Failed'};
+        }
+      
       
     }
 
@@ -89,6 +146,6 @@ const driver = neo4j.driver('bolt://3.236.157.146:7687',
     
     module.exports={
         // findAll,findById,findByAndUpdate,
-        create,findPeopleTheSameFavorites,addFavorites
+        create,findPeopleTheSameFavorites,addFavorites,findFriendOfFriend,follow,unfollow
       }
  

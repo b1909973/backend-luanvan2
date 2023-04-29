@@ -9,6 +9,14 @@ class UserController{
      return  res.send(records)
     
 }
+
+static async findFriendOfFriend(req,res){
+  const records =await UserService.findFriendOfFriend(req.params.id)
+  console.log(records)
+   return  res.send(records)
+  
+}
+
   static async findAll(req,res){
         const records =await UserService.findAll()
         console.log(records)
@@ -34,8 +42,17 @@ static async create(req,res){
   const result = await UserService.create(req.body)
   res.send('ok')
 }
+static async follow(req,res){
+  console.log(req)
+  const result = await UserService.follow(req.body.id,req.params.id)
+  res.send(result)
+}
 
-
+static async unfollow(req,res){
+  console.log(req)
+  const result = await UserService.unfollow(req.body.id,req.params.id)
+  res.send(result);
+}
 
 
 }
