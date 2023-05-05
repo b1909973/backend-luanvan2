@@ -1,7 +1,8 @@
 const neo4j = require('neo4j-driver');
-const driver = neo4j.driver('bolt://3.236.157.146:7687',
-                  neo4j.auth.basic('neo4j', 'vomit-servants-town'), 
+const driver = neo4j.driver('bolt://54.175.135.210:7687',
+                  neo4j.auth.basic('neo4j', 'breezes-visibilities-circumstance'), 
                   {/* encrypted: 'ENCRYPTION_OFF' */});
+
 
 // const personName = 'Alice'
 
