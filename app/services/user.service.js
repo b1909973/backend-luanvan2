@@ -40,7 +40,7 @@ const driver = neo4j.driver('bolt://54.175.135.210:7687',
       try{
           console.log('deo');
             
-        const result = await session.run(` match (a:user {id:'${id}'})-[:FOLLOWING]->(b:user)-[:FOLLOWING]->(u1:user) where not (u1)-[:FOLLOWING]->(a) and u1<>a return u1`)
+        const result = await session.run(` match (a:user {id:'${id}'})-[:FOLLOWING]->(b:user)-[:FOLLOWING]->(u1:user) where not (a)-[:FOLLOWING]->(u1) and u1<>a return u1`)
         const kq =result.records.map(i=>{
           console.log(i.get('u1').properties.id)
           return (i.get('u1').properties.id)
